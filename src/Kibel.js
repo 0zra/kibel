@@ -49,7 +49,7 @@ export default function Kibel() {
       <Grid container spacing={5}  justify="flex-end"
         alignItems="center">
         <Grid item xs={12}>
-          <Paper className={classes.paper}>{zajete && 'Zajęte' || 'Wolne'}</Paper>
+          <Paper className={classes.paper}>{zajete ? 'Zajęte' : 'Wolne'}</Paper>
         </Grid>
         <Grid item xs={12} md={6}>
           <Button 
