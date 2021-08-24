@@ -57,7 +57,7 @@ const [time, setTime] = React.useState(undefined);
       setZajete(data['is_occupied']);
       setZauzimatelj(data['occupied_by']);
       setType(data['occupation_type'])
-      data['occupied_since'] && setTime(data['occupied_since'])
+      setTime(data['occupied_since'])
     };
     const getStatusInterval = setInterval(getStatus, 10000);
     getStatus();
