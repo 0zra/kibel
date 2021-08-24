@@ -25,7 +25,7 @@ export default function Kibel() {
   React.useEffect(()=>{
     async function  getStatus() {
       let response = await fetch(
-        `http://dfranczu.webd.pro/dmajka/kibel/public/api/7589deed-d338-4a90-8000-e93ad76428b6/status`,
+        `https://dfranczu.webd.pro/dmajka/kibel/public/api/7589deed-d338-4a90-8000-e93ad76428b6/status`,
         {
           method: "GET", 
           headers: { 
@@ -62,7 +62,7 @@ export default function Kibel() {
             onClick={() => { 
               async function  setOccupate() {
                 let response = await fetch(
-                  `http://dfranczu.webd.pro/dmajka/kibel/public/api/7589deed-d338-4a90-8000-e93ad76428b6/occupate`,
+                  `https://dfranczu.webd.pro/dmajka/kibel/public/api/7589deed-d338-4a90-8000-e93ad76428b6/occupate`,
                   {
                     method: "GET", 
                     headers: { 
@@ -93,7 +93,7 @@ export default function Kibel() {
             onClick={() => { 
               async function  setFree() {
                 let response = await fetch(
-                  `http://dfranczu.webd.pro/dmajka/kibel/public/api/7589deed-d338-4a90-8000-e93ad76428b6/make-free`,
+                  `https://dfranczu.webd.pro/dmajka/kibel/public/api/7589deed-d338-4a90-8000-e93ad76428b6/make-free`,
                   {
                     method: "GET", 
                     headers: { 
