@@ -40,7 +40,7 @@ export default function Kibel() {
       setZajete(data['is_occupied']);
     };
     setInterval(getStatus, 10000);
-    
+    getStatus();
   }, [])
 
 
