@@ -1,8 +1,10 @@
 import React from 'react';
+import { stringify } from 'qs';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -19,11 +21,16 @@ const useStyles = makeStyles((theme) => ({
 
 
 export default function Kibel() {
-  // const [zauzimatelj, setZauzimatelj] = React.useState(false);
+  const [user, setUser] = React.useState(null);
   const [zajete, setZajete] = React.useState(false)
+  const [fieldValue, setFieldValue] = React.useState('');
   const classes = useStyles();
   React.useEffect(()=>{
     async function  getStatus() {
+      const kibelUser = localStorage.getItem('kibelUser');
+      if(kibelUser) {
+        setUser(kibelUser);
+      }
       let response = await fetch(
         `https://dfranczu.webd.pro/dmajka/kibel/public/api/7589deed-d338-4a90-8000-e93ad76428b6/status`,
         {
@@ -48,6 +55,34 @@ export default function Kibel() {
     <div className={classes.root}>
       <Grid container spacing={5}  justify="flex-end"
         alignItems="center">
+          {!user ?<>
+            <Grid item xs={12}>
+          <TextField 
+          label="Użytkownik" 
+          variant="outlined" 
+          color="primary"
+          fullWidth
+          value={fieldValue}
+          onChange={(e)=>setFieldValue(e.target.value)}
+          style={{marginLeft: "10px", marginRight: '10px', backgroundColor: 'white'}}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Button 
+            variant="contained" 
+            color="secondary" 
+            size="large"
+            fullWidth 
+            style={{padding: '20px', fontSize: '30px', fontWeight: 700}}
+            onClick={() => { 
+              localStorage.setItem('kibelUser', fieldValue)
+              setUser(fieldValue);
+            }}
+          >
+            Potwierdź
+          </Button>
+        </Grid>
+          </> : <>
         <Grid item xs={12}>
           <Paper className={classes.paper}>{zajete ? 'Zajęte' : 'Wolne'}</Paper>
         </Grid>
@@ -61,8 +96,9 @@ export default function Kibel() {
             disabled={zajete}
             onClick={() => { 
               async function  setOccupate() {
+                const queries = stringify({'occupied_by': user}, { skipNulls: true })
                 let response = await fetch(
-                  `https://dfranczu.webd.pro/dmajka/kibel/public/api/7589deed-d338-4a90-8000-e93ad76428b6/occupate`,
+                  `https://dfranczu.webd.pro/dmajka/kibel/public/api/7589deed-d338-4a90-8000-e93ad76428b6/occupate?${queries}`,
                   {
                     method: "GET", 
                     headers: { 
@@ -113,6 +149,8 @@ export default function Kibel() {
             Uwolnij
           </Button>
         </Grid>
+        </>}
+       
       </Grid>
     </div>
   );
