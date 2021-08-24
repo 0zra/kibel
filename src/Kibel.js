@@ -27,7 +27,7 @@ export default function Kibel() {
   const [zajmuje, setZajmuje] = React.useState(false)
   const [fieldValue, setFieldValue] = React.useState('');
   const [type, setType] = React.useState('');
-  const [time, setTime] = React.useState(undefined);
+const [time/*, setTime*/] = React.useState(undefined);
   const classes = useStyles();
 
   async function  setOccupate(type) {
