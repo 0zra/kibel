@@ -5,6 +5,7 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import Timer from './Timer'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -27,7 +28,7 @@ export default function Kibel() {
   const [zajmuje, setZajmuje] = React.useState(false)
   const [fieldValue, setFieldValue] = React.useState('');
   const [type, setType] = React.useState('');
-const [time/*, setTime*/] = React.useState(undefined);
+const [time, setTime] = React.useState(undefined);
   const classes = useStyles();
 
   async function  setOccupate(type) {
@@ -56,14 +57,14 @@ const [time/*, setTime*/] = React.useState(undefined);
       setZajete(data['is_occupied']);
       setZauzimatelj(data['occupied_by']);
       setType(data['occupation_type'])
-      if(data['occupied_since']) {
-        const {minutes , seconds} = calculateTimePast(data['occupied_since']);
-        console.log(`Juz ${minutes} minut & ${seconds} sekund`)
-        // setTime(`Juz ${minutes} minut & ${seconds} sekund`)
-      }
+      data['occupied_since'] && setTime(data['occupied_since'])
     };
-    setInterval(getStatus, 10000);
+    const getStatusInterval = setInterval(getStatus, 10000);
     getStatus();
+    console.log('Rerender se okine')
+    return ()=> {
+      clearInterval(getStatusInterval);
+    }
   }, [zajmuje])
 
 const displayEmoji = type === 'pee'? '💦' : 
@@ -71,7 +72,6 @@ type === 'poop' ? '💩' :
 type === 'shower'? '🚿' : '';
   return (
     <div className={classes.root}>
-      {time && calculateTimePast(time)}
       <Grid container spacing={5}  justify="flex-end"
         alignItems="center">
           {!user ?
@@ -104,7 +104,10 @@ type === 'shower'? '🚿' : '';
         </Grid>
           </> : <>
         <Grid item xs={12}>
-          <Paper className={classes.paper}>{zajete ? `Zajęte: ${zauzimatelj}(${displayEmoji})` : 'Wolne'}</Paper>
+          <Paper className={classes.paper}>
+            {zajete ? `Zajęte: ${zauzimatelj}(${displayEmoji}) ` : 'Wolne'}
+            {time && <Timer time={time} />}
+            </Paper>
         </Grid>
         {!zajmuje && <Grid item xs={12} md={6}>
           <Button 
@@ -175,6 +178,7 @@ type === 'shower'? '🚿' : '';
                 let data = await response.json();
                 // console.log(data);
                 setZajete(data['is_occupied']);
+                setTime(undefined);
               };
               setFree();
             }}
@@ -187,23 +191,4 @@ type === 'shower'? '🚿' : '';
       </Grid>
     </div>
   );
-}
-
-
-
-
-
-
-function calculateTimePast(start) {
-
-  const timeStart = new Date(start*1000);
-  const timeNow = Date.now();
-
-  const timeLeft = (timeNow - timeStart) / 1000;
-console.log(Math.floor(timeLeft / 60), 'minutes')
-console.log(Math.floor(timeLeft / 60), 'seconds')
-  return {
-    minutes: Math.floor(timeLeft / 60),
-    seconds: Math.floor((timeLeft % 60)),
-  };
 }
