@@ -22,7 +22,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Kibel() {
   const [user, setUser] = React.useState(null);
+  const [zauzimatelj, setZauzimatelj] = React.useState(null);
   const [zajete, setZajete] = React.useState(false)
+  const [zajmuje, setZajmuje] = React.useState(false)
   const [fieldValue, setFieldValue] = React.useState('');
   const classes = useStyles();
   React.useEffect(()=>{
@@ -45,6 +47,7 @@ export default function Kibel() {
       let data = await response.json();
       console.log(data);
       setZajete(data['is_occupied']);
+      setZauzimatelj(data['occupied_by']);
     };
     setInterval(getStatus, 10000);
     getStatus();
@@ -55,7 +58,8 @@ export default function Kibel() {
     <div className={classes.root}>
       <Grid container spacing={5}  justify="flex-end"
         alignItems="center">
-          {!user ?<>
+          {!user ?
+          <>
             <Grid item xs={12}>
           <TextField 
           label="Użytkownik" 
@@ -86,7 +90,33 @@ export default function Kibel() {
         <Grid item xs={12}>
           <Paper className={classes.paper}>{zajete ? 'Zajęte' : 'Wolne'}</Paper>
         </Grid>
-        <Grid item xs={12} md={6}>
+        {!zajmuje && <Grid item xs={12} md={6}>
+          <Button 
+            variant="contained" 
+            color="secondary" 
+            size="large"
+            fullWidth 
+            style={{padding: '20px', fontSize: '30px', fontWeight: 700}}
+            disabled={zajete}
+            onClick={() => { 
+              setZajmuje(true);
+              // async function  setOccupate() {
+              //   const queries = stringify({'occupied_by': user}, { skipNulls: true })
+              //   let response = await fetch(
+              //     `https://dfranczu.webd.pro/dmajka/kibel/public/api/7589deed-d338-4a90-8000-e93ad76428b6/occupate?${queries}`,
+              //     {method: "GET", }
+              //   );
+              
+              //   let data = await response.json();
+              //   setZajete(data['is_occupied']);
+              // };
+              // setOccupate();
+            }}
+          >
+            Zajmij
+          </Button>
+        </Grid>}
+        {zajmuje && <Grid item xs={4} >
           <Button 
             variant="contained" 
             color="secondary" 
@@ -96,30 +126,73 @@ export default function Kibel() {
             disabled={zajete}
             onClick={() => { 
               async function  setOccupate() {
-                const queries = stringify({'occupied_by': user}, { skipNulls: true })
+                const queries = stringify({'occupied_by': user, 'occupation_type': 'pee'}, { skipNulls: true })
                 let response = await fetch(
                   `https://dfranczu.webd.pro/dmajka/kibel/public/api/7589deed-d338-4a90-8000-e93ad76428b6/occupate?${queries}`,
-                  {
-                    method: "GET", 
-                    headers: { 
-                      // "Content-Type": "application/json",
-                    // "Access-Control-Allow-Origin": "no-cors"
-                    }
-                  }
+                  {method: "GET", }
                 );
-              
                 let data = await response.json();
-                console.log(data);
                 setZajete(data['is_occupied']);
+                setZajmuje(false);
               };
               setOccupate();
             }}
           >
-            Zajmij
+            💦
           </Button>
-        </Grid>
+        </Grid>}
+        {zajmuje && <Grid item xs={4} >
+          <Button 
+            variant="contained" 
+            color="secondary" 
+            size="large"
+            fullWidth 
+            style={{padding: '20px', fontSize: '30px', fontWeight: 700}}
+            disabled={zajete}
+            onClick={() => { 
+              async function  setOccupate() {
+                const queries = stringify({'occupied_by': user, 'occupation_type': 'poop'}, { skipNulls: true })
+                let response = await fetch(
+                  `https://dfranczu.webd.pro/dmajka/kibel/public/api/7589deed-d338-4a90-8000-e93ad76428b6/occupate?${queries}`,
+                  {method: "GET", }
+                );
+                let data = await response.json();
+                setZajete(data['is_occupied']);
+                setZajmuje(false);
+              };
+              setOccupate();
+            }}
+          >
+            💩
+          </Button>
+        </Grid>}
+        {zajmuje && <Grid item xs={4} >
+          <Button 
+            variant="contained" 
+            color="secondary" 
+            size="large"
+            fullWidth 
+            style={{padding: '20px', fontSize: '30px', fontWeight: 700, }}
+            disabled={zajete}
+            onClick={() => { 
+              async function  setOccupate() {
+                const queries = stringify({'occupied_by': user, 'occupation_type': 'shower'}, { skipNulls: true })
+                let response = await fetch(
+                  `https://dfranczu.webd.pro/dmajka/kibel/public/api/7589deed-d338-4a90-8000-e93ad76428b6/occupate?${queries}`,
+                  {method: "GET", }
+                );
+                let data = await response.json();
+                setZajete(data['is_occupied']);
+                setZajmuje(false);
+              };
+              setOccupate();
+            }}
+          >
+           🚿
+          </Button>
+        </Grid>}
         <Grid item xs={12} md={6}>
-        <Button 
+        {(zauzimatelj === user || !zauzimatelj)&& <Button 
             variant="contained" 
             color="primary" 
             size="large"
@@ -147,7 +220,7 @@ export default function Kibel() {
             }}
           >
             Uwolnij
-          </Button>
+          </Button>}
         </Grid>
         </>}
        
