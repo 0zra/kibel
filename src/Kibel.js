@@ -28,6 +28,18 @@ export default function Kibel() {
   const [fieldValue, setFieldValue] = React.useState('');
   const [type, setType] = React.useState('');
   const classes = useStyles();
+
+  async function  setOccupate(type) {
+    const queries = stringify({'occupied_by': user, 'occupation_type': type}, { skipNulls: true })
+    let response = await fetch(
+      `https://dfranczu.webd.pro/dmajka/kibel/public/api/7589deed-d338-4a90-8000-e93ad76428b6/occupate?${queries}`,
+      {method: "GET", }
+    );
+    let data = await response.json();
+    setZajete(data['is_occupied']);
+    setZajmuje(false);
+  };
+
   React.useEffect(()=>{
     async function  getStatus() {
       const kibelUser = localStorage.getItem('kibelUser');
@@ -36,26 +48,21 @@ export default function Kibel() {
       }
       let response = await fetch(
         `https://dfranczu.webd.pro/dmajka/kibel/public/api/7589deed-d338-4a90-8000-e93ad76428b6/status`,
-        {
-          method: "GET", 
-          headers: { 
-            // "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "no-cors"
-          }
-        }
       );
     
       let data = await response.json();
-      console.log(data);
+      // console.log(data);
       setZajete(data['is_occupied']);
       setZauzimatelj(data['occupied_by']);
       setType(data['occupation_type'])
     };
     setInterval(getStatus, 10000);
     getStatus();
-  }, [])
+  }, [zajmuje])
 
-
+const displayEmoji = type === 'pee'? '💦' : 
+type === 'poop' ? '💩' :
+type === 'shower'? '🚿' : '';
   return (
     <div className={classes.root}>
       <Grid container spacing={5}  justify="flex-end"
@@ -90,7 +97,7 @@ export default function Kibel() {
         </Grid>
           </> : <>
         <Grid item xs={12}>
-          <Paper className={classes.paper}>{zajete ? `Zajęte: ${zauzimatelj}(${type})` : 'Wolne'}</Paper>
+          <Paper className={classes.paper}>{zajete ? `Zajęte: ${zauzimatelj}(${displayEmoji})` : 'Wolne'}</Paper>
         </Grid>
         {!zajmuje && <Grid item xs={12} md={6}>
           <Button 
@@ -100,20 +107,7 @@ export default function Kibel() {
             fullWidth 
             style={{padding: '20px', fontSize: '30px', fontWeight: 700}}
             disabled={zajete}
-            onClick={() => { 
-              setZajmuje(true);
-              // async function  setOccupate() {
-              //   const queries = stringify({'occupied_by': user}, { skipNulls: true })
-              //   let response = await fetch(
-              //     `https://dfranczu.webd.pro/dmajka/kibel/public/api/7589deed-d338-4a90-8000-e93ad76428b6/occupate?${queries}`,
-              //     {method: "GET", }
-              //   );
-              
-              //   let data = await response.json();
-              //   setZajete(data['is_occupied']);
-              // };
-              // setOccupate();
-            }}
+            onClick={() => { setZajmuje(true);}}
           >
             Zajmij
           </Button>
@@ -126,19 +120,7 @@ export default function Kibel() {
             fullWidth 
             style={{padding: '20px', fontSize: '30px', fontWeight: 700}}
             disabled={zajete}
-            onClick={() => { 
-              async function  setOccupate() {
-                const queries = stringify({'occupied_by': user, 'occupation_type': 'pee'}, { skipNulls: true })
-                let response = await fetch(
-                  `https://dfranczu.webd.pro/dmajka/kibel/public/api/7589deed-d338-4a90-8000-e93ad76428b6/occupate?${queries}`,
-                  {method: "GET", }
-                );
-                let data = await response.json();
-                setZajete(data['is_occupied']);
-                setZajmuje(false);
-              };
-              setOccupate();
-            }}
+            onClick={() => { setOccupate('pee');}}
           >
             💦
           </Button>
@@ -151,19 +133,7 @@ export default function Kibel() {
             fullWidth 
             style={{padding: '20px', fontSize: '30px', fontWeight: 700}}
             disabled={zajete}
-            onClick={() => { 
-              async function  setOccupate() {
-                const queries = stringify({'occupied_by': user, 'occupation_type': 'poop'}, { skipNulls: true })
-                let response = await fetch(
-                  `https://dfranczu.webd.pro/dmajka/kibel/public/api/7589deed-d338-4a90-8000-e93ad76428b6/occupate?${queries}`,
-                  {method: "GET", }
-                );
-                let data = await response.json();
-                setZajete(data['is_occupied']);
-                setZajmuje(false);
-              };
-              setOccupate();
-            }}
+            onClick={() => { setOccupate('poop');}}
           >
             💩
           </Button>
@@ -176,19 +146,7 @@ export default function Kibel() {
             fullWidth 
             style={{padding: '20px', fontSize: '30px', fontWeight: 700, }}
             disabled={zajete}
-            onClick={() => { 
-              async function  setOccupate() {
-                const queries = stringify({'occupied_by': user, 'occupation_type': 'shower'}, { skipNulls: true })
-                let response = await fetch(
-                  `https://dfranczu.webd.pro/dmajka/kibel/public/api/7589deed-d338-4a90-8000-e93ad76428b6/occupate?${queries}`,
-                  {method: "GET", }
-                );
-                let data = await response.json();
-                setZajete(data['is_occupied']);
-                setZajmuje(false);
-              };
-              setOccupate();
-            }}
+            onClick={() => { setOccupate('shower');}}
           >
            🚿
           </Button>
@@ -215,7 +173,7 @@ export default function Kibel() {
                 );
               
                 let data = await response.json();
-                console.log(data);
+                // console.log(data);
                 setZajete(data['is_occupied']);
               };
               setFree();
@@ -229,4 +187,22 @@ export default function Kibel() {
       </Grid>
     </div>
   );
+}
+
+
+
+
+
+
+function calculateTimePast(start) {
+
+  const timeStart = new Date(start*1000);
+  const timeNow = Date.now();
+
+  const timeLeft = (timeNow - timeStart) / 1000;
+
+  return {
+    minutes: Math.floor(timeLeft / 60),
+    seconds: Math.floor((timeLeft % 60)),
+  };
 }
