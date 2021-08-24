@@ -27,6 +27,7 @@ export default function Kibel() {
   const [zajmuje, setZajmuje] = React.useState(false)
   const [fieldValue, setFieldValue] = React.useState('');
   const [type, setType] = React.useState('');
+  const [time, setTime] = React.useState(undefined);
   const classes = useStyles();
 
   async function  setOccupate(type) {
@@ -55,6 +56,11 @@ export default function Kibel() {
       setZajete(data['is_occupied']);
       setZauzimatelj(data['occupied_by']);
       setType(data['occupation_type'])
+      if(data['occupied_since']) {
+        const {minutes , seconds} = calculateTimePast(data['occupied_since']);
+        console.log(`Juz ${minutes} minut & ${seconds} sekund`)
+        // setTime(`Juz ${minutes} minut & ${seconds} sekund`)
+      }
     };
     setInterval(getStatus, 10000);
     getStatus();
@@ -65,6 +71,7 @@ type === 'poop' ? '💩' :
 type === 'shower'? '🚿' : '';
   return (
     <div className={classes.root}>
+      {time && calculateTimePast(time)}
       <Grid container spacing={5}  justify="flex-end"
         alignItems="center">
           {!user ?
@@ -163,13 +170,6 @@ type === 'shower'? '🚿' : '';
               async function  setFree() {
                 let response = await fetch(
                   `https://dfranczu.webd.pro/dmajka/kibel/public/api/7589deed-d338-4a90-8000-e93ad76428b6/make-free`,
-                  {
-                    method: "GET", 
-                    headers: { 
-                      // "Content-Type": "application/json",
-                    // "Access-Control-Allow-Origin": "no-cors"
-                    }
-                  }
                 );
               
                 let data = await response.json();
@@ -200,7 +200,8 @@ function calculateTimePast(start) {
   const timeNow = Date.now();
 
   const timeLeft = (timeNow - timeStart) / 1000;
-
+console.log(Math.floor(timeLeft / 60), 'minutes')
+console.log(Math.floor(timeLeft / 60), 'seconds')
   return {
     minutes: Math.floor(timeLeft / 60),
     seconds: Math.floor((timeLeft % 60)),
