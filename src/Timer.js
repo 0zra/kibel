@@ -18,7 +18,7 @@ export default function Timer(props) {
     return ()=> {
       clearInterval(timerInterval);
     }
-  }, [])
+  }, [props.time])
 
   return <>{time}</>
 }
