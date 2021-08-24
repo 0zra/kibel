@@ -26,6 +26,7 @@ export default function Kibel() {
   const [zajete, setZajete] = React.useState(false)
   const [zajmuje, setZajmuje] = React.useState(false)
   const [fieldValue, setFieldValue] = React.useState('');
+  const [type, setType] = React.useState('');
   const classes = useStyles();
   React.useEffect(()=>{
     async function  getStatus() {
@@ -48,6 +49,7 @@ export default function Kibel() {
       console.log(data);
       setZajete(data['is_occupied']);
       setZauzimatelj(data['occupied_by']);
+      setType(data['occupation_type'])
     };
     setInterval(getStatus, 10000);
     getStatus();
@@ -88,7 +90,7 @@ export default function Kibel() {
         </Grid>
           </> : <>
         <Grid item xs={12}>
-          <Paper className={classes.paper}>{zajete ? 'Zajęte' : 'Wolne'}</Paper>
+          <Paper className={classes.paper}>{zajete ? `Zajęte: ${zauzimatelj}(${type})` : 'Wolne'}</Paper>
         </Grid>
         {!zajmuje && <Grid item xs={12} md={6}>
           <Button 
